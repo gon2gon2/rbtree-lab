@@ -73,10 +73,14 @@ void right_rotate(rbtree *t, node_t *p) {
 }
 
 void insert_fixup(rbtree *t, node_t *z) { 
-  // 
+  // while the parent of z has red color
   while ( z->parent->color == RBTREE_RED) {
+
+    // 1. if parent is left child
     if (z->parent == z->parent->parent->left) {
       node_t *y = z->parent->parent->right;
+      
+      // case 1-1. if uncle has red color
       if ( y->color == RBTREE_RED ) {
         z->parent->color = RBTREE_BLACK;
         y->color = RBTREE_BLACK;
@@ -84,16 +88,23 @@ void insert_fixup(rbtree *t, node_t *z) {
         z = z->parent->parent;
       }
       else {
+        // case 1-2. if uncle has black color (triangle, < -> /)
+        // it makes z - parent - grandparent straight
         if ( z == z->parent->right) {
           z = z->parent;
           left_rotate(t, z);
         }
+        // case 1-3. if uncle has black color (line)
         z->parent->color = RBTREE_BLACK;
         z->parent->parent->color = RBTREE_RED;
         right_rotate(t, z->parent->parent);
       }
-    } else {
+    }
+    // 2. if parent is right child
+    else {
       node_t *y = z->parent->parent->left;
+
+      // case 2-1. if uncle has red color
       if ( y->color == RBTREE_RED ) {
         z->parent->color = RBTREE_BLACK;
         y->color = RBTREE_BLACK;
@@ -101,10 +112,13 @@ void insert_fixup(rbtree *t, node_t *z) {
         z = z->parent->parent;
       }
       else {
+        // case 2-2. if uncle has black color (triangle, > -> \)
+        // it makes z - parent - grandparent straight
         if ( z == z->parent->left) {
           z = z->parent;
           right_rotate(t, z);
         }
+        // case 2-3. if uncle has black color (line)
         z->parent->color = RBTREE_BLACK;
         z->parent->parent->color = RBTREE_RED;
         left_rotate(t, z->parent->parent);
