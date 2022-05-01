@@ -24,6 +24,53 @@ void delete_rbtree(rbtree *t) {
   free(t);
 }
 
+void left_rotate(rbtree *t, node_t *p) {
+  // 1. set q(right of p)
+  node_t *q = p->right;
+
+  // 2. transplant left of q to right of p
+  p->right = q->left;
+  if (q->left != t->nil){
+    q->left->parent = p;
+  }
+  // 3. set p's parent as q
+  p->parent = q;
+  if (p->parent == t->nil) {
+    t->root = q;
+  } else if (p->parent->left == p) {
+    p->parent->left = q;
+  } else {
+    p->parent->right = q;
+  }
+
+  // 4. set q's left as p
+  q->left = p;
+  p->parent = q;
+}
+
+void right_rotate(rbtree *t, node_t *p) {
+  // 1. set q(left of p)
+  node_t *q = p->left;
+
+  // 2. transplant right of q to left of p
+  p->left = q->right;
+  if (q->right != t->nil){
+    q->right->parent = p;
+  }
+  // 3. set p's parent as q
+  p->parent = q;
+  if (p->parent == t->nil) {
+    t->root = q;
+  } else if (p->parent->right == p) {
+    p->parent->right = q;
+  } else {
+    p->parent->left = q;
+  }
+
+  // 4. set q's right as p
+  q->right = p;
+  p->parent = q;
+}
 node_t *rbtree_insert(rbtree *t, const key_t key) {
   // TODO: implement insert
   return t->root;
@@ -52,4 +99,3 @@ int rbtree_erase(rbtree *t, node_t *p) {
 int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
   // TODO: implement to_array
   return 0;
-}
