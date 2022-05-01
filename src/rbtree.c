@@ -5,11 +5,22 @@
 rbtree *new_rbtree(void) {
   rbtree *p = (rbtree *)calloc(1, sizeof(rbtree));
   // TODO: initialize struct if needed
+
+  // NIL 노드 생성과 색깔 설정
+  node_t *NIL = (node_t *)calloc(1, sizeof(node_t));
+  NIL->color = RBTREE_BLACK;
+
+
+  // 트리의 root포인터와 nul 포인터가 NIL노드를 가리키게 함
+  p->root = NIL;
+  p->nil = NIL;
+
   return p;
 }
 
 void delete_rbtree(rbtree *t) {
   // TODO: reclaim the tree nodes's memory
+  free(t->nil);
   free(t);
 }
 
