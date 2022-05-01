@@ -149,10 +149,12 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
   }
 
   // set z as a child of the parent y
+  // if z is the root, z's parent will be NIL
   z->parent = y;
+
+  // set child of the parent y
   if (y == t->nil) {
     t->root = z;
-    z->parent = t->nil;  // set the parent of the root 
   } else if ( z->key < y->key ) {
     y->left = z;
   } else {
