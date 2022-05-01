@@ -73,6 +73,7 @@ void right_rotate(rbtree *t, node_t *p) {
 }
 
 void insert_fixup(rbtree *t, node_t *z) { 
+  // 
   while ( z->parent->color == RBTREE_RED) {
     if (z->parent == z->parent->parent->left) {
       node_t *y = z->parent->parent->right;
@@ -123,7 +124,7 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
   node_t *y = t->nil;
   node_t *x = t->root;
 
-  // find termianl node, parent of the new node z
+  // find termianl node y, the parent of the new node z
   while ( x != t->nil ) {
     y = x;
     if (z->key < x->key) {
@@ -137,6 +138,7 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
   z->parent = y;
   if (y == t->nil) {
     t->root = z;
+    z->parent = t->nil;  // set the parent of the root 
   } else if ( z->key < y->key ) {
     y->left = z;
   } else {
