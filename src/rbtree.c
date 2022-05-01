@@ -11,7 +11,7 @@ rbtree *new_rbtree(void) {
   NIL->color = RBTREE_BLACK;
 
 
-  // 트리의 root포인터와 nul 포인터가 NIL노드를 가리키게 함
+  // 트리의 root포인터와 nil 포인터가 NIL노드를 가리키게 함
   p->root = NIL;
   p->nil = NIL;
 
