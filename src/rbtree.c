@@ -36,7 +36,7 @@ void delete_rbtree(rbtree *t) {
   free_node, nil, t       -> 9/8
   free_node, nil, root, t -> double free
 
-  erase root 에서 남는 뭔가 생겨서 해결해야 됨
+  erase root 에서 남는 뭔가 생겨서 해결해야 됨 -> erase에서 free를 해주지 않아서 발생했음
   */
   free_node(t, t->root);
   free(t->nil);
@@ -55,7 +55,7 @@ void left_rotate(rbtree *t, node_t *p) {
     q->left->parent = p;
   }
   // 3. set p's parent as q
-  p->parent = q;
+  q->parent = p->parent;
   if (p->parent == t->nil) {
     t->root = q;
   } else if (p->parent->left == p) {
@@ -79,7 +79,7 @@ void right_rotate(rbtree *t, node_t *p) {
     q->right->parent = p;
   }
   // 3. set p's parent as q
-  p->parent = q;
+  q->parent = p->parent;
   if (p->parent == t->nil) {
     t->root = q;
   } else if (p->parent->right == p) {
@@ -95,11 +95,12 @@ void right_rotate(rbtree *t, node_t *p) {
 
 void insert_fixup(rbtree *t, node_t *z) { 
   // while the parent of z has red color
+  node_t *y;
   while ( z->parent->color == RBTREE_RED) {
 
     // 1. if parent is left child
     if (z->parent == z->parent->parent->left) {
-      node_t *y = z->parent->parent->right;
+      y = z->parent->parent->right;
       
       // case 1-1. if uncle has red color
       if ( y->color == RBTREE_RED ) {
@@ -123,7 +124,7 @@ void insert_fixup(rbtree *t, node_t *z) {
     }
     // 2. if parent is right child
     else {
-      node_t *y = z->parent->parent->left;
+      y = z->parent->parent->left;
 
       // case 2-1. if uncle has red color
       if ( y->color == RBTREE_RED ) {
@@ -239,7 +240,7 @@ node_t *tree_minimum(rbtree *t, node_t * p) {
   return p;
 }
 
-void rbtree_delete_fixup(rbtree *t, node_t *x) {
+void rbtree_erase_fixup(rbtree *t, node_t *x) {
   node_t *w;
   while (x != t->root && x->color == RBTREE_BLACK) {
     if (x == x->parent->right) {
@@ -336,10 +337,11 @@ int rbtree_erase(rbtree *t, node_t *p) {
     q->color = r->color;
 
   if (q_original_color == RBTREE_BLACK) {
-    rbtree_delete_fixup(t, r);
+    rbtree_erase_fixup(t, r);
     }
   }
 
+  free(p);
 
   return 0;
 }
