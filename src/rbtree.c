@@ -256,13 +256,13 @@ node_t *tree_minimum(rbtree *t, node_t * p) {
 void rbtree_erase_fixup(rbtree *t, node_t *x) {
   node_t *w;
   while (x != t->root && x->color == RBTREE_BLACK) {
-    if (x == x->parent->right) {
+    if (x == x->parent->left) {
       w = x->parent->right;
       if (w->color == RBTREE_RED) {
         w->color = RBTREE_BLACK;
         x->parent->color = RBTREE_RED;
         left_rotate(t, x->parent);
-        w = w->parent->right;
+        w = x->parent->right;
       }
 
       if (w->left->color == RBTREE_BLACK && w->right->color == RBTREE_BLACK) {
@@ -291,7 +291,7 @@ void rbtree_erase_fixup(rbtree *t, node_t *x) {
         w->color = RBTREE_BLACK;
         x->parent->color = RBTREE_RED;
         right_rotate(t, x->parent);
-        w = w->parent->left;
+        w = x->parent->left;
       }
 
       if (w->right->color == RBTREE_BLACK && w->left->color == RBTREE_BLACK) {
@@ -315,6 +315,7 @@ void rbtree_erase_fixup(rbtree *t, node_t *x) {
   }
   x->color = RBTREE_BLACK;
 }
+
 int rbtree_erase(rbtree *t, node_t *p) {
   // TODO: implement erase
 
@@ -347,10 +348,9 @@ int rbtree_erase(rbtree *t, node_t *p) {
     q->left = p->left;
     q->left->parent = q;
     q->color = p->color;
-
+  }
   if (q_original_color == RBTREE_BLACK) {
     rbtree_erase_fixup(t, r);
-    }
   }
 
   free(p);
