@@ -199,12 +199,20 @@ node_t *rbtree_find(const rbtree *t, const key_t key) {
 
 node_t *rbtree_min(const rbtree *t) {
   // TODO: implement find
-  return t->root;
+  node_t *temp = t->root;
+  while (temp != t->nil) {
+    temp = temp->left;
+  }
+  return temp;
 }
 
 node_t *rbtree_max(const rbtree *t) {
   // TODO: implement find
-  return t->root;
+  node_t *temp = t->root;
+  while (temp != t->nil) {
+    temp = temp->right;
+  }
+  return temp;
 }
 
 void rbtree_transplant(rbtree *t, node_t *u, node_t *v){
