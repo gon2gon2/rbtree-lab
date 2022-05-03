@@ -198,14 +198,17 @@ node_t *rbtree_find(const rbtree *t, const key_t key) {
   node_t *temp = t->root;
 
   while (temp != t->nil && temp->key != key) {
-    if (temp->key < key){
+    if (temp->key > key){
       temp = temp->left;
     } else if (temp->key < key) {
       temp = temp->right;
     }
   }
 
-  return temp;
+  if (temp->key == key) {
+    return temp;
+  } 
+  return NULL;
 }
 
 node_t *rbtree_min(const rbtree *t) {
@@ -312,7 +315,6 @@ void rbtree_erase_fixup(rbtree *t, node_t *x) {
   }
   x->color = RBTREE_BLACK;
 }
-
 int rbtree_erase(rbtree *t, node_t *p) {
   // TODO: implement erase
 
@@ -338,13 +340,13 @@ int rbtree_erase(rbtree *t, node_t *p) {
     }
     else {
       rbtree_transplant(t, q, q->right);
-      q->right = r->right;
+      q->right = p->right;
       q->right->parent = q;
     }
     rbtree_transplant(t, p, q);
-    q->left = r->left;
+    q->left = p->left;
     q->left->parent = q;
-    q->color = r->color;
+    q->color = p->color;
 
   if (q_original_color == RBTREE_BLACK) {
     rbtree_erase_fixup(t, r);
