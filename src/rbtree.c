@@ -18,10 +18,31 @@ rbtree *new_rbtree(void) {
   return p;
 }
 
+void free_node(rbtree *t, node_t *p) {
+  if (p != t->nil) {
+    free_node(t, p->left);
+    free_node(t, p->right);
+    free(p);
+    p = NULL;
+  }
+}
+
 void delete_rbtree(rbtree *t) {
   // TODO: reclaim the tree nodes's memory
+
+  /*
+  free_node               -> 9/2
+  free_node, t            -> 9/5
+  free_node, nil, t       -> 9/8
+  free_node, nil, root, t -> double free
+
+  erase root 에서 남는 뭔가 생겨서 해결해야 됨
+  */
+  free_node(t, t->root);
   free(t->nil);
+  t->nil = NULL;
   free(t);
+  t = NULL;
 }
 
 void left_rotate(rbtree *t, node_t *p) {
