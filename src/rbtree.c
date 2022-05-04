@@ -254,10 +254,12 @@ node_t *tree_minimum(rbtree *t, node_t * p) {
 }
 
 void rbtree_erase_fixup(rbtree *t, node_t *x) {
-  node_t *w;
+  node_t *w; // brother of x
   while (x != t->root && x->color == RBTREE_BLACK) {
     if (x == x->parent->left) {
       w = x->parent->right;
+      
+      // case 1: w's color == RED
       if (w->color == RBTREE_RED) {
         w->color = RBTREE_BLACK;
         x->parent->color = RBTREE_RED;
@@ -265,17 +267,20 @@ void rbtree_erase_fixup(rbtree *t, node_t *x) {
         w = x->parent->right;
       }
 
+      // case 2: if w is black and (black, black)
       if (w->left->color == RBTREE_BLACK && w->right->color == RBTREE_BLACK) {
         w->color = RBTREE_RED;
         x = x->parent;
       }
       else {
+        // case 3: if w is black and (red, black)
         if (w->right->color == RBTREE_BLACK) {
           w->left->color = RBTREE_BLACK;
           w->color = RBTREE_RED;
           right_rotate(t, w);
           w = x->parent->right;
         }
+        // case 4: if w is black and (?, red)
         w->color = x->parent->color;
         x->parent->color = RBTREE_BLACK;
         w->right->color = RBTREE_BLACK;
@@ -318,38 +323,54 @@ void rbtree_erase_fixup(rbtree *t, node_t *x) {
 
 int rbtree_erase(rbtree *t, node_t *p) {
   // TODO: implement erase
+  node_t *r;
 
   node_t *q = p;
   color_t q_original_color = q->color;
-  node_t *r;
 
+  // if p has one child(left) 
   if (p->left == t->nil) {
     r = p->right;
     rbtree_transplant(t, p, p->right);
   }
+  // if p has one child(right) 
   else if (p->right == t->nil) {
     r = p->left;
     rbtree_transplant(t, p, p->left);
   }
+  // if p has two child
   else {
-    q = tree_minimum(t, p->right);
+    /*
+    p -> 삭제하려는 값
+    q -> successor
+    r -> child of successor
+    */
+
+
+    q = tree_minimum(t, p->right);  // find successor
     q_original_color = q->color;
-    r = q->right;
+    r = q->right;                   // child of successor
     
     if (q->parent == p) {
+      // sucessor's parent == node to be deleted
+      // set r's parent q explicitly
       r->parent = q;
     }
     else {
+      // sucessor's parent != node to be deleted
       rbtree_transplant(t, q, q->right);
       q->right = p->right;
       q->right->parent = q;
     }
+    // set left child's parent and color
     rbtree_transplant(t, p, q);
     q->left = p->left;
     q->left->parent = q;
     q->color = p->color;
   }
+
   if (q_original_color == RBTREE_BLACK) {
+    // if the color of erased node is black, execute fixup
     rbtree_erase_fixup(t, r);
   }
 
